@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنصة الذكية للبنك</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>المنصة الذكية للعقود وتقييم المخاطر</h1>
+            <p>منصة متكاملة لتقييم الائتمان، تحليل العقود، تقييم الموردين، وكشف غسيل الأموال باستخدام الذكاء الاصطناعي (NLP & ML)</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-link active" onclick="openTab(event, 'CreditScoring')">التقييم الائتماني</button>
+            <button class="tab-link" onclick="openTab(event, 'nlp-tab')">التحليل الذكي للعقود (NLP)</button>
+            <button class="tab-link" onclick="openTab(event, 'supplier-tab')">تقييم الموردين (NLP)</button>
+            <button class="tab-link" onclick="openTab(event, 'aml-tab')">مكافحة غسيل الأموال (AML)</button>
+        </div>
+
+        <div id="CreditScoring" class="tab-content" style="display: block;">
+            <form id="predictionForm">
+                <fieldset>
+                    <legend>البيانات الديموغرافية والمالية (Demographic & Financial)</legend>
+                    <div class="form-group">
+                        <label>عمر العميل (Age):</label>
+                        <input type="number" name="age_client" value="35" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الدخل الشهري (Monthly Salary):</label>
+                        <input type="number" name="monthly_salary" value="12000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>سنوات العمل (Employment Years):</label>
+                        <input type="number" name="employment_years" value="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>عدد الأطفال (Children):</label>
+                        <input type="number" name="nb_children" value="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الجنس (Gender):</label>
+                        <select name="gender" required>
+                            <option value="1">ذكر (Male)</option>
+                            <option value="0">أنثى (Female)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المستوى التعليمي (Education Level):</label>
+                        <select name="education_level" required>
+                            <option value="1">ابتدائي / إعدادي (Primary/Middle)</option>
+                            <option value="2">ثانوي (High School)</option>
+                            <option value="3" selected>جامعي / بكالوريوس (Bachelor)</option>
+                            <option value="4">دراسات عليا (Master/PhD)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الحالة الاجتماعية (Family Status):</label>
+                        <select name="family_status" required>
+                            <option value="1" selected>أعزب (Single)</option>
+                            <option value="2">متزوج (Married)</option>
+                            <option value="3">مطلق (Divorced)</option>
+                            <option value="4">أرمل (Widowed)</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>بيانات التمويل والمرابحة (Financing & Murabaha)</legend>
+                    <div class="form-group">
+                        <label>نوع المرابحة (Murabaha Type):</label>
+                        <select name="murabaha_type" required>
+                            <option value="1" selected>مرابحة سيارات (Auto)</option>
+                            <option value="2">مرابحة عقارية (Real Estate)</option>
+                            <option value="3">مرابحة سلع (Goods)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>مبلغ التمويل (Financing Amount):</label>
+                        <input type="number" name="financing_amount" value="150000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>القسط الشهري (Monthly Installment):</label>
+                        <input type="number" name="monthly_installment" value="3500" required>
+                    </div>
+                    <div class="form-group">
+                        <label>مدة العقد بالأشهر (Duration in Months):</label>
+                        <input type="number" name="contract_duration_months" value="60" required>
+                    </div>
+                    <div class="form-group">
+                        <label>نسبة الهامش (Margin Rate):</label>
+                        <input type="number" step="0.01" name="margin_rate" value="0.05" required>
+                    </div>
+                    <div class="form-group">
+                        <label>قيمة الضمان (Collateral Value):</label>
+                        <input type="number" name="collateral_value" value="200000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>سنة العقد (Contract Year):</label>
+                        <input type="number" name="contract_year" value="2023" required>
+                    </div>
+                </fieldset>
+
+                <button type="submit" id="submitBtn">تقييم المخاطر (Predict)</button>
+            </form>
+
+            <div id="result" style="display: none; margin-top: 2rem;"></div>
+        </div>
+
+        <div id="nlp-tab" class="tab-content" style="display: none;">
+            <form id="contractForm" enctype="multipart/form-data">
+                <fieldset>
+                    <legend>رفع العقد للتحليل الذكي</legend>
+                    <div class="form-group" style="width: 100%;">
+                        <label>ملف العقد (PDF أو TXT أو DOCX):</label>
+                        <input type="file" name="contract_file" accept=".pdf,.txt,.docx" required style="background: transparent; padding: 10px 0; font-size: 1.1rem;">
+                    </div>
+                </fieldset>
+                <button type="submit" id="contractSubmitBtn">تحليل العقد (Analyze)</button>
+            </form>
+            <div id="contractResult" style="display: none;"></div>
+        </div>
+
+        <div id="supplier-tab" class="tab-content" style="display: none;">
+            <form id="supplierForm">
+                <fieldset>
+                    <legend>بيانات المورد للتقييم الديناميكي</legend>
+                    <div class="form-group">
+                        <label>اسم المورد (Supplier Name):</label>
+                        <input type="text" name="supplier_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>نسبة التأخير التاريخية (%):</label>
+                        <input type="number" step="0.1" name="delay_percentage" value="0" required>
+                    </div>
+                    <div class="form-group" style="width: 100%;">
+                        <label>نصوص وتقارير (رسائل بريد، تقارير جودة، أخبار):</label>
+                        <textarea name="feedback_text" rows="5" placeholder="ألصق أي نصوص متعلقة بالمورد هنا للتحليل..." required style="width: 100%; padding: 10px; background: var(--input-bg); border: 1px solid var(--surface-border); border-radius: 8px; color: var(--text-primary); outline: none;"></textarea>
+                    </div>
+                </fieldset>
+                <button type="submit" id="supplierSubmitBtn">تقييم المورد (Evaluate)</button>
+            </form>
+            <div id="supplierResult" style="display: none;"></div>
+        </div>
+
+        <div id="aml-tab" class="tab-content" style="display: none;">
+            <form id="amlForm">
+                <fieldset>
+                    <legend>رفع تقرير المعاملة للتحليل الذكي (AML)</legend>
+                    <div class="form-group" style="width: 100%;">
+                        <label>تقرير الحوالة أو ملف العميل (PDF أو TXT أو DOCX):</label>
+                        <input type="file" name="aml_file" accept=".pdf,.txt,.docx" required style="background: transparent; padding: 10px 0; font-size: 1.1rem;">
+                    </div>
+                </fieldset>
+                <button type="submit" id="amlSubmitBtn">تحليل التقرير وكشف الاحتيال (AML Analysis)</button>
+            </form>
+            <div id="amlResult" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.getElementById('predictionForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const btn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            
+            btn.disabled = true;
+            btn.innerText = 'جاري التقييم...';
+            resultDiv.style.display = 'none';
+            resultDiv.className = '';
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    const isHighRisk = result.probability > 50;
+                    resultDiv.className = isHighRisk ? 'high-risk' : 'success-risk';
+                    resultDiv.innerHTML = `
+                        <h3>${result.prediction}</h3>
+                        <p>نسبة الخطر: ${result.probability.toFixed(2)}%</p>
+                    `;
+                } else {
+                    resultDiv.className = 'high-risk';
+                    resultDiv.innerHTML = `خطأ: ${result.message}`;
+                }
+                resultDiv.style.display = 'block';
+            } catch (err) {
+                resultDiv.className = 'high-risk';
+                resultDiv.innerHTML = `خطأ في الاتصال بالخادم`;
+                resultDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'تقييم المخاطر (Predict)';
+            }
+        };
+
+        document.getElementById('contractForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const btn = document.getElementById('contractSubmitBtn');
+            const resultDiv = document.getElementById('contractResult');
+            
+            btn.disabled = true;
+            btn.innerText = 'جاري التحليل... (يرجى الانتظار)';
+            resultDiv.style.display = 'none';
+            resultDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch('/analyze_contract', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const resultData = data.data;
+                    let html = `<div class="nlp-result-box">`;
+                    html += `<h3>نتائج تحليل العقد</h3>`;
+                    
+                    if (resultData.critical_dates && resultData.critical_dates.length > 0) {
+                        html += `<div class="nlp-section"><h4>📅 التواريخ الحرجة</h4><ul>`;
+                        resultData.critical_dates.forEach(item => {
+                            html += `<li>${item}</li>`;
+                        });
+                        html += `</ul></div>`;
+                    }
+                    
+                    if (resultData.parties) {
+                        html += `<div class="nlp-section"><h4>👥 الأطراف</h4><ul>`;
+                        if (Array.isArray(resultData.parties)) {
+                            resultData.parties.forEach((item, index) => {
+                                html += `<li><strong>الطرف ${index+1}:</strong> ${item}</li>`;
+                            });
+                        } else {
+                            for (const [key, value] of Object.entries(resultData.parties)) {
+                                html += `<li><strong>${key}:</strong> ${value}</li>`;
+                            }
+                        }
+                        html += `</ul></div>`;
+                    }
+
+                    if (resultData.penalty_clauses && resultData.penalty_clauses.length > 0) {
+                        html += `<div class="nlp-section"><h4>💰 الشروط الجزائية</h4><ul>`;
+                        resultData.penalty_clauses.forEach(item => {
+                            html += `<li>${item}</li>`;
+                        });
+                        html += `</ul></div>`;
+                    }
+                    
+                    if (resultData.high_risk_clauses && resultData.high_risk_clauses.length > 0) {
+                        html += `<div class="nlp-section danger-section"><h4>⚠️ بنود عالية المخاطر</h4><ul>`;
+                        resultData.high_risk_clauses.forEach(item => {
+                            html += `<li>${item}</li>`;
+                        });
+                        html += `</ul></div>`;
+                    }
+                    
+                    if (resultData.contradictions && resultData.contradictions.length > 0) {
+                        html += `<div class="nlp-section danger-section"><h4>⛔ التناقضات مع سياسة المصرف</h4><ul>`;
+                        resultData.contradictions.forEach(item => {
+                            html += `<li>${item}</li>`;
+                        });
+                        html += `</ul></div>`;
+                    } else {
+                        html += `<div class="nlp-section"><h4>✅ التناقضات</h4><p>لا يوجد تناقضات واضحة مع سياسة المصرف الإسلامي.</p></div>`;
+                    }
+                    
+                    html += `</div>`;
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<div class="high-risk">حدث خطأ: ${data.message}</div>`;
+                }
+                resultDiv.style.display = 'block';
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="high-risk">خطأ في الاتصال بالخادم: ${err.message}</div>`;
+                resultDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'تحليل العقد (Analyze)';
+            }
+        };
+
+        document.getElementById('supplierForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('supplierSubmitBtn');
+            const resultDiv = document.getElementById('supplierResult');
+            
+            const formData = {
+                supplier_name: document.querySelector('input[name="supplier_name"]').value,
+                delay_percentage: document.querySelector('input[name="delay_percentage"]').value,
+                feedback_text: document.querySelector('textarea[name="feedback_text"]').value
+            };
+            
+            btn.disabled = true;
+            btn.innerText = 'جاري التقييم... (يرجى الانتظار)';
+            resultDiv.style.display = 'none';
+            resultDiv.className = '';
+            
+            try {
+                const response = await fetch('/evaluate_supplier', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const score = data.data.final_risk_score || data.data.risk_score;
+                    if (score > 70) resultDiv.className = 'high-risk';
+                    else if (score > 30) resultDiv.className = 'warning-risk';
+                    else resultDiv.className = 'success-risk';
+                    
+                    let html = `<h3>${data.data.decision}</h3>`;
+                    html += `<p>مؤشر المخاطر النهائي: <strong>${score} / 100</strong></p>`;
+                    
+                    const warnings = data.data.red_flags || data.data.early_warnings || [];
+                    if (warnings.length > 0) {
+                        html += `<div style="margin-top: 15px; text-align: right;"><strong style="color: #ef4444;">العلامات التحذيرية المستخرجة من الذكاء الاصطناعي:</strong><ul>`;
+                        warnings.forEach(flag => {
+                            html += `<li style="margin-right: 20px;">${flag}</li>`;
+                        });
+                        html += `</ul></div>`;
+                    }
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.className = 'high-risk';
+                    resultDiv.innerHTML = `حدث خطأ: ${data.message}`;
+                }
+                resultDiv.style.display = 'block';
+            } catch (err) {
+                resultDiv.className = 'high-risk';
+                resultDiv.innerHTML = `خطأ في الاتصال بالخادم: ${err.message}`;
+                resultDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'تقييم المورد (Evaluate)';
+            }
+        };
+
+        document.getElementById('amlForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const btn = document.getElementById('amlSubmitBtn');
+            const resultDiv = document.getElementById('amlResult');
+            
+            btn.disabled = true;
+            btn.innerText = 'جاري التحليل المعقد للتقرير...';
+            resultDiv.style.display = 'none';
+            resultDiv.className = '';
+            
+            try {
+                const response = await fetch('/analyze_aml_transaction', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const isAlert = data.is_aml_alert;
+                    resultDiv.className = isAlert ? 'high-risk' : 'success-risk';
+                    
+                    let featuresHtml = '<ul style="text-align: right; direction: rtl; display: inline-block; margin-top: 15px;">';
+                    for (const [key, value] of Object.entries(data.extracted_features)) {
+                        featuresHtml += `<li style="margin-bottom: 5px;"><strong>${key}:</strong> ${value}</li>`;
+                    }
+                    featuresHtml += '</ul>';
+                    
+                    resultDiv.innerHTML = `
+                        <h3>${data.decision}</h3>
+                        <p style="font-size: 1.2rem;"><strong>نسبة احتمال الجريمة المالية:</strong> ${data.risk_probability.toFixed(2)}%</p>
+                        <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+                        <h4 style="color: #6ee7b7;">البيانات التي استخرجها الذكاء الاصطناعي من التقرير:</h4>
+                        ${featuresHtml}
+                    `;
+                } else {
+                    resultDiv.className = 'high-risk';
+                    resultDiv.innerHTML = `حدث خطأ: ${data.message}`;
+                }
+                resultDiv.style.display = 'block';
+            } catch (err) {
+                resultDiv.className = 'high-risk';
+                resultDiv.innerHTML = `خطأ في الاتصال بالخادم: ${err.message}`;
+                resultDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'تحليل التقرير وكشف الاحتيال (AML Analysis)';
+            }
+        };
+    </script>
+</body>
+</html>
